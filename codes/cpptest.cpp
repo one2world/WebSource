@@ -20,6 +20,7 @@ void test_vector()
    
 
     using namespace std;
+    using namespace lmath;
 
     cout << "===========  ¹¹Ôì   ===================" << endl;
     Vector3 v1(1.0);
