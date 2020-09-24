@@ -4,13 +4,19 @@
 #include <iostream>
 #include "vector.h"
 
-void test_vector();
+#include <windows.h>
+#include <WinBase.h>
+#include <ctime>
 
+
+void test_vector();
+void cpuCacheTest();
 
 int main()
 {
-    test_vector();
-    //std::cout << "Hello World!\n";
+    //test_vector();
+    cpuCacheTest();
+    std::cout << "Hello World!\n";
 }
 
 #pragma region vector²âÊÔ
@@ -155,3 +161,61 @@ void test_vector()
 }
 
 #pragma endregion
+
+
+#pragma region CPU»º´æ
+
+void cpuCacheTest()
+{
+    using namespace std;
+    cout << "WWWWWWWWWWWWWWW" << endl;
+    int testNumbers[2048];
+    for (size_t i = 0; i < 2048; i++)
+    {
+        testNumbers[i] = i;
+    }
+
+    //±éÀú1
+    DWORD start_time, end_time;
+    int sum = 0;
+    start_time = GetTickCount();
+
+    for (size_t i = 0; i < 1024 << 10; i++)
+    {
+        for (size_t j = 0; j < 2048; j++)
+        {
+            sum +=  testNumbers[j];
+        }
+    }
+    end_time = GetTickCount();
+
+    cout << "nc:" << (end_time - start_time) << endl; //3531
+
+    //±éÀú2
+    start_time = GetTickCount();
+    size_t i = 0, j = 0;
+    sum = 0;
+    for (; i < 1024 <<10 ; i++)
+    {
+        j = 0;
+        for (; j < 2048; j++)
+        {
+            sum += testNumbers[j];
+        }
+    }
+    end_time = GetTickCount();
+    cout <<"c:"<< (end_time - start_time) << endl;
+}
+
+#pragma endregion
+
+
+#pragma region Òì²½io
+
+void ansyIOTest()
+{
+    struct io_ring s;
+}
+
+#pragma endregion
+
