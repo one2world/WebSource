@@ -12,11 +12,79 @@
 void test_vector();
 void cpuCacheTest();
 
+int Ceil2Pow(int x)
+{
+    if (x == 0) {
+        return 0;
+    }
+
+    --x;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+
+    return ++x;
+}
+
+#ifdef _M_CEE_PURE
+#define CCall __clrcall
+#else
+#define CCall __cdecl
+#endif
+
+#define ExportAPI CCall
+
+void ExportAPI operator delete(void* p_mem, size_t size, const char* p_description) {
+    printf("Call to placement delete should not happen. %s", p_description);
+}
+
+void* operator new(std::size_t sz) {
+    std::printf("global op new called, size = %zu\n", sz);
+    void* ptr = std::malloc(sz);
+    if (ptr)
+        return ptr;
+    else
+        throw std::bad_alloc{};
+}
+void operator delete(void* ptr) noexcept
+{
+    std::puts("global op delete called");
+    std::free(ptr);
+}
+
+
 int main()
 {
     //test_vector();
-    cpuCacheTest();
-    std::cout << "Hello World!\n";
+    //cpuCacheTest();
+
+    //int* arrtmp = new int[6];
+
+    //delete[] arrtmp;
+    //arrtmp = NULL;
+
+    int* p1 = new int;
+    delete p1;
+
+    int* p2 = new int[10]; // guaranteed to call the replacement in C++11
+    delete[] p2;
+
+
+    std::cout << "Hello World!\n"
+        << Ceil2Pow(11)<<std::endl
+        <<Ceil2Pow(1<<16 -1) << std::endl;
+
+    std::cout << "type of bytes\n"
+        << "_int64\t" << sizeof(signed _int64) << std::endl
+        << "u _int64\t" << sizeof(unsigned _int64) << std::endl
+        << "_int32\t" << sizeof(signed _int32) << std::endl
+        << "u _int32\t" << sizeof(signed _int32) << std::endl
+        << "__int16\t" << sizeof(signed __int16) << std::endl
+        << "u __int16\t" << sizeof(signed __int16) << std::endl
+        << "__int8\t" << sizeof(signed __int8) << std::endl
+        << "u __int8\t" << sizeof(unsigned __int8) << std::endl;
 }
 
 #pragma region vector²âÊÔ
@@ -214,7 +282,7 @@ void cpuCacheTest()
 
 void ansyIOTest()
 {
-    struct io_ring s;
+    //struct io_ring s;
 }
 
 #pragma endregion
